@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r123/three.module.js';
+import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 
 class BasicWorldDemo {
@@ -71,17 +72,18 @@ class BasicWorldDemo {
         ] );
         this._scene.background = texture;
 
-        const plane = new THREE.Mesh(
-            new THREE.PlaneGeometry( 100, 100 ,1 ,1 ),
-            new THREE.MeshStandardMaterial({
-                color: 0X444444
-            }));
-        plane.castShadow = false;
-        plane.receiveShadow = true;
-        plane.rotation.x = -Math.PI / 2;
-        this._scene.add(plane);
-
+        this._LoadModel();
         this._RAF();
+    }
+
+    _LoadModel() {
+        const loader = new GLTFLoader();
+        loader.load('./assets/raven.gltf', (gltf) => {
+            gltf.scene.traverse(c => {
+                c.castShadow = true;
+            });
+            this._scene.add(gltf.scene);
+        })
     }
 
     // Add responsiveness
